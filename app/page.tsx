@@ -9,8 +9,6 @@ type Station = {
 };
 
 function toEmbedUrl(playlistUrl: string) {
-  // Accepts https://open.spotify.com/playlist/<id>?...
-  // Returns https://open.spotify.com/embed/playlist/<id>?utm_source=generator
   try {
     const u = new URL(playlistUrl);
     const parts = u.pathname.split("/").filter(Boolean); // ["playlist", "<id>"]
@@ -18,37 +16,60 @@ function toEmbedUrl(playlistUrl: string) {
     if (!id) return playlistUrl;
     return `https://open.spotify.com/embed/playlist/${id}?utm_source=generator`;
   } catch {
-    return playlistUrl; // already embed or malformed
+    return playlistUrl;
   }
 }
 
+// Placeholder “Spotify logo” (se poi vuoi, lo sostituiamo con una svg in /public)
+function SpotifyMark() {
+  return (
+    <span className="spotifyMark" aria-label="Spotify">
+      S
+    </span>
+  );
+}
+
 export default function Page() {
+  // Personalizzazioni MVP (hardcoded)
+  const city = "Milano";
+  const displayName = "Diego"; // "Public playlist Diego ..."
+  const spotifyUserHandle = "nome_user"; // placeholder: sostituisci con @diegoRandazzo o quello che vuoi
+
   const stations: Station[] = useMemo(() => {
     return [
       {
-        cityLabel: "Milano",
+        cityLabel: city,
         stationLabel: "Station A",
         embedUrl: toEmbedUrl(
           "https://open.spotify.com/playlist/3WWGsRoU65tU0g9bLATQMw?si=PAJQJG7BRkyjMMMCO9fG3Q"
         )
+      },
+      {
+        cityLabel: city,
+        stationLabel: "Station B",
+        embedUrl: toEmbedUrl(
+          "https://open.spotify.com/playlist/1D3IkjrQv7TPcfwyplb4Hf?si=60335457bcc74407"
+        )
       }
-      // Quando scali, aggiungi B/C/D qui
     ];
   }, []);
 
-  const [isOpen, setIsOpen] = useState(false);
+  // Player aperto di default
+  const [isOpen, setIsOpen] = useState(true);
   const [tuning, setTuning] = useState(false);
   const [idx, setIdx] = useState(0);
 
   const current = stations[idx];
 
-  function showTuning(label: string) {
+  function showTuning(text?: string) {
     setTuning(true);
-    // (facoltativo) puoi cambiare testo, qui lo lasciamo semplice
+    const el = document.getElementById("tuningLine");
+    if (el && text) el.textContent = text;
     setTimeout(() => setTuning(false), 750);
   }
 
   function onTuneIn() {
+    // lascio il bottone: utile per chiudere/aprire, ma di default è già open
     if (!isOpen) {
       showTuning("Loading player");
       setIsOpen(true);
@@ -58,24 +79,21 @@ export default function Page() {
   }
 
   function onSwap() {
-    if (stations.length <= 1) {
-      showTuning("Only one station");
-      if (!isOpen) setIsOpen(true);
-      return;
-    }
     if (!isOpen) setIsOpen(true);
-    showTuning("Tuning…");
+    showTuning("Tuning to next station");
     setIdx((prev) => (prev + 1) % stations.length);
   }
 
   return (
     <main className="hero">
       <div className="bg" aria-hidden="true" />
+
       <header className="top">
         <div className="brand">
           <b>CityVibe</b>
-          <small>global radio vibes</small>
+          <small>global people vibes</small>
         </div>
+
         <div className="pill">Guest mode · {current.cityLabel}</div>
       </header>
 
@@ -83,8 +101,8 @@ export default function Page() {
         <div className="card copy">
           <h1>Sintonizzati sul mood della tua città.</h1>
           <p>
-            Demo MVP (guest). Premi Tune in per aprire Spotify Embed. Spotify potrebbe chiedere
-            login per ascolto completo.
+            Demo MVP (guest). Il player è già pronto: cambia stazione e ascolta via Spotify Embed.
+            Spotify potrebbe chiedere login per ascolto completo.
           </p>
 
           <div className="row">
@@ -94,19 +112,53 @@ export default function Page() {
             <button className="btn" onClick={onSwap}>
               Cambia stazione
             </button>
-            <span className="meta">Milano · 1 station</span>
+            <span className="meta">
+              {current.cityLabel} · {stations.length} stations
+            </span>
           </div>
         </div>
 
+        {/* RADIO-STYLE FRAME */}
         <aside className="card radio" aria-label="Player">
           <div className="radioHead">
             <div className="radioTitle">
               <b>
                 {current.cityLabel} — {current.stationLabel}
               </b>
-              <span>Public playlist on Spotify</span>
+              <span>
+                Public playlist {displayName} (@{spotifyUserHandle} on Spotify)
+              </span>
             </div>
-            <span className="badge">Spotify Embed</span>
+
+            {/* “Spotify embed” → Spotify mark */}
+            <div className="badge">
+              <SpotifyMark />
+              <span>Spotify</span>
+            </div>
+          </div>
+
+          {/* “radio faceplate” */}
+          <div className="radioFace">
+            <div className="freq">
+              <span className="freqLabel">TUNE</span>
+              <span className="freqValue">97.3</span>
+              <span className="freqCity">{current.cityLabel.toUpperCase()}</span>
+            </div>
+
+            <div className="knobs">
+              <div className="knob">
+                <span>VOL</span>
+                <i />
+              </div>
+              <div className="knob">
+                <span>BASS</span>
+                <i />
+              </div>
+              <div className="knob">
+                <span>MOOD</span>
+                <i />
+              </div>
+            </div>
           </div>
 
           <div className={`playerWrap ${isOpen ? "" : "hidden"}`}>
@@ -122,11 +174,23 @@ export default function Page() {
             <div className="noise" aria-hidden="true" />
             <div className="tuningText">
               <b>Tuning…</b>
-              <span>Loading station</span>
+              <span id="tuningLine">Loading station</span>
             </div>
           </div>
         </aside>
       </section>
+
+      {/* TICKER ROSSO IN BASSO */}
+      <div className="ticker" role="status" aria-label="News ticker">
+        <div className="tickerTrack">
+          <div className="tickerItem">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit — sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </div>
+          <div className="tickerItem">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit — sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </div>
+        </div>
+      </div>
 
       <div className="foot">
         Tip: metti la tua immagine POV in <code>/public/pov.png</code>
@@ -160,6 +224,7 @@ export default function Page() {
           pointer-events: none;
           z-index: 1;
         }
+
         .top {
           position: absolute;
           top: 0;
@@ -193,6 +258,7 @@ export default function Page() {
           color: var(--muted);
           font-size: 13px;
         }
+
         .content {
           position: relative;
           z-index: 3;
@@ -201,7 +267,7 @@ export default function Page() {
           grid-template-columns: 1.2fr 0.8fr;
           gap: 18px;
           align-items: end;
-          padding-bottom: 10px;
+          padding-bottom: 54px; /* lascia spazio al ticker */
         }
         @media (max-width: 880px) {
           .content {
@@ -209,6 +275,7 @@ export default function Page() {
             gap: 14px;
           }
         }
+
         .card {
           border: 1px solid var(--stroke);
           background: var(--glass);
@@ -261,6 +328,11 @@ export default function Page() {
           color: rgba(238, 242, 255, 0.6);
         }
 
+        /* RADIO STYLE */
+        .radio {
+          position: relative;
+          background: linear-gradient(180deg, rgba(0, 0, 0, 0.46), rgba(0, 0, 0, 0.32));
+        }
         .radioHead {
           display: flex;
           align-items: center;
@@ -280,19 +352,111 @@ export default function Page() {
           font-size: 12px;
           color: var(--muted);
         }
+
         .badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
           font-size: 12px;
-          color: rgba(238, 242, 255, 0.8);
+          color: rgba(238, 242, 255, 0.9);
           border: 1px solid rgba(255, 255, 255, 0.14);
           padding: 6px 10px;
           border-radius: 999px;
           background: rgba(255, 255, 255, 0.06);
         }
+        .spotifyMark {
+          width: 18px;
+          height: 18px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 999px;
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          background: rgba(0, 0, 0, 0.22);
+          color: rgba(238, 242, 255, 0.9);
+          font-weight: 800;
+          font-size: 12px;
+          line-height: 1;
+        }
+
+        .radioFace {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          padding: 12px 14px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+        }
+        .freq {
+          display: grid;
+          grid-template-columns: auto auto;
+          grid-template-rows: auto auto;
+          gap: 2px 10px;
+          padding: 10px 12px;
+          border-radius: 14px;
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          background: rgba(0, 0, 0, 0.22);
+          min-width: 168px;
+        }
+        .freqLabel {
+          font-size: 10px;
+          color: rgba(238, 242, 255, 0.65);
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+        }
+        .freqValue {
+          font-size: 18px;
+          font-weight: 800;
+          letter-spacing: 0.02em;
+        }
+        .freqCity {
+          grid-column: 1 / -1;
+          font-size: 10px;
+          color: rgba(238, 242, 255, 0.65);
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+        }
+
+        .knobs {
+          display: flex;
+          gap: 10px;
+        }
+        .knob {
+          width: 58px;
+          height: 44px;
+          border-radius: 14px;
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          background: rgba(0, 0, 0, 0.22);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          overflow: hidden;
+        }
+        .knob span {
+          position: absolute;
+          top: 6px;
+          left: 10px;
+          font-size: 9px;
+          color: rgba(238, 242, 255, 0.62);
+          letter-spacing: 0.12em;
+        }
+        .knob i {
+          width: 18px;
+          height: 18px;
+          border-radius: 999px;
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          background: rgba(255, 255, 255, 0.06);
+          box-shadow: inset 0 0 0 2px rgba(0,0,0,0.25);
+          transform: rotate(-20deg);
+        }
+
         .playerWrap {
           position: relative;
           height: 0;
           padding-bottom: 56%;
-          background: rgba(0, 0, 0, 0.2);
+          background: rgba(0, 0, 0, 0.18);
         }
         @media (max-width: 880px) {
           .playerWrap {
@@ -310,6 +474,7 @@ export default function Page() {
           display: none;
         }
 
+        /* TUNING overlay */
         .tuning {
           position: absolute;
           inset: 0;
@@ -333,12 +498,8 @@ export default function Page() {
           animation: drift 1.2s linear infinite;
         }
         @keyframes drift {
-          0% {
-            transform: translate3d(0, 0, 0);
-          }
-          100% {
-            transform: translate3d(-40px, 25px, 0);
-          }
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-40px, 25px, 0); }
         }
         .tuningText {
           position: relative;
@@ -360,9 +521,42 @@ export default function Page() {
           color: var(--muted);
         }
 
+        /* TICKER ROSSO */
+        .ticker {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 4;
+          height: 40px;
+          background: #d11f1f;
+          border-top: 1px solid rgba(255,255,255,0.20);
+          overflow: hidden;
+        }
+        .tickerTrack {
+          display: flex;
+          height: 100%;
+          align-items: center;
+          gap: 48px;
+          white-space: nowrap;
+          will-change: transform;
+          animation: marquee 18s linear infinite;
+        }
+        .tickerItem {
+          color: #fff;
+          font-weight: 700;
+          font-size: 14px;
+          letter-spacing: 0.01em;
+          padding-left: 16px;
+        }
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+
         .foot {
           position: absolute;
-          bottom: 10px;
+          bottom: 50px; /* sopra il ticker */
           left: 50%;
           transform: translateX(-50%);
           z-index: 3;
