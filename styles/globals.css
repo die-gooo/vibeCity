@@ -1,0 +1,22 @@
+:root{
+  --bg:#0b0d12;
+  --fg:#eef2ff;
+  --muted:rgba(238,242,255,.75);
+  --glass:rgba(0,0,0,.38);
+  --stroke:rgba(255,255,255,.12);
+  --shadow: 0 20px 60px rgba(0,0,0,.55);
+  --radius:18px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  background: var(--bg);
+  color: var(--fg);
+  overflow-x:hidden;
+}
+
+a{ color: inherit; text-decoration: none; }
+button{ font: inherit; }
