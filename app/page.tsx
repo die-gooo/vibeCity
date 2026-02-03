@@ -223,27 +223,30 @@ export default function Page() {
         }
 
         /* WRAP */
-        .wrap {
-          position: relative;
-          z-index: 3;
-          width: min(860px, 100%);
-          margin: 68px 0 64px 0; /* top space + ticker space */
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-        }
+.wrap {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  margin: 0;
+}
 
         /* RADIO CARD */
-        .radio {
-          width: 100%;
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          background: rgba(0, 0, 0, 0.38);
-          backdrop-filter: blur(14px);
-          border-radius: 18px;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
-          overflow: hidden;
-          position: relative;
-        }
+.radio {
+  position: fixed;
+  right: 16px;
+  bottom: 56px; /* sopra ticker (40px) + respiro */
+  z-index: 6;
+
+  width: 420px;
+  max-width: calc(100vw - 32px);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
 
         .radioHead {
           display: flex;
@@ -487,7 +490,7 @@ export default function Page() {
             margin: 64px 0 48px 0;
           }
           .playerWrap {
-            padding-bottom: 140%; /* embed grande su mobile */
+            padding-bottom: 120%; /* embed grande su mobile */
           }
           .freq {
             min-width: 132px;
@@ -502,6 +505,14 @@ export default function Page() {
           .badge span {
             display: none; /* su mobile: solo logo/placeholder */
           }
+          .radio {
+    left: 12px;
+    right: 12px;
+    bottom: 56px;
+    width: auto;              /* full width mobile */
+    max-width: none;
+    border-radius: 16px;
+  }
         }
       `}</style>
     </main>
