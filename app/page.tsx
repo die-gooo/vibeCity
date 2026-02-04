@@ -73,16 +73,17 @@ export default function Page() {
       {/* ✅ VIDEO LOOP BACKGROUND (metti /public/loops/pov.mp4) */}
       <div className="bgLayer" aria-hidden="true">
         <video
-          className="bgVideo"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster="/pov.png"
-        >
-          <source src="/loops/pov.mp4" type="video/mp4" />
-        </video>
+  className="bgVideo"
+  controls
+  muted
+  loop
+  playsInline
+  preload="auto"
+  poster="/pov.png"
+  style={{ zIndex: 2 }}
+>
+  <source src="/loops/pov.mp4" type="video/mp4" />
+</video>
 
         {/* fallback immagine (resta dietro al video) */}
         <div className="bgFallback" aria-hidden="true" />
