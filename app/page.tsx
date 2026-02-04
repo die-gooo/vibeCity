@@ -611,17 +611,42 @@ export default function Page() {
           100% { transform: translateX(-50%); }
         }
 
-        @media (max-width: 880px) {
-          .playerWrap { padding-bottom: 120%; }
-          .radio {
-            left: 12px;
-            right: 12px;
-            bottom: 56px;
-            width: auto;
-            max-width: none;
-            border-radius: 16px;
-          }
-        }
+   @media (max-width: 880px) {
+  /* la card resta grande ma non full-screen */
+  .radio {
+    left: 12px;
+    right: 12px;
+    bottom: 56px;
+    width: auto;
+    max-width: none;
+    border-radius: 16px;
+  }
+
+  /* 🔑 RIDIMENSIONA SPOTIFY */
+  .playerWrap {
+    padding-bottom: 65%; /* prima era 120% */
+  }
+
+  /* testo un filo più compatto */
+  .radioTitle b {
+    font-size: 12px;
+  }
+  .radioTitle span {
+    font-size: 11px;
+  }
+
+  /* knobs leggermente più piccoli */
+  .knob {
+    width: 46px;
+    height: 34px;
+  }
+
+  /* freq più compatta */
+  .freq {
+    min-width: 120px;
+    padding: 8px 9px;
+  }
+}
       `}</style>
     </main>
   );
