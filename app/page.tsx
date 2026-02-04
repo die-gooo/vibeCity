@@ -170,15 +170,29 @@ export default function Page() {
           padding: clamp(14px, 3vw, 24px);
           background: #000;
         }
-        .bg {
-          position: absolute;
-          inset: 0;
-          background-image: url("/pov.png");
-          background-size: cover;
-          background-position: center;
-          filter: saturate(1.05) contrast(1.05);
-          transform: scale(1.03);
-        }
+ .bg {
+  position: absolute;
+  inset: 0;
+  background-image: url("/pov.png");
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.05) contrast(1.05);
+  transform: scale(1.03);
+
+  z-index: 0;
+  will-change: transform, filter;
+}
+.cv-noisePage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: cvNoise 1.2s steps(2) infinite;
+}
+
+
         .hero::before {
           content: "";
           position: absolute;
