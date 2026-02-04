@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 <body>
   <div className="relative min-h-screen overflow-hidden">
-    <RadioBackground src="/bg.jpg" />
+    <RadioBackground src="/pov.png" />
 
     <div className="relative z-10">
       {children}
