@@ -26,21 +26,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ) : null}
       </head>
 
-      <body>
-        {gtmId ? (
-          <noscript>
-            {/* GTM noscript fallback */}
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
-              height="0"
-              width="0"
-              style={{ display: "none", visibility: "hidden" }}
-            />
-          </noscript>
-        ) : null}
+      import { RadioBackground } from "@/components/RadioBackground";
 
-        {children}
-      </body>
+<body>
+  <div className="relative min-h-screen overflow-hidden">
+    <RadioBackground src="/bg.jpg" />
+
+    {children}
+  </div>
+</body>
+      
     </html>
   );
 }
