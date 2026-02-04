@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 
 type Station = {
   cityLabel: string;
@@ -56,6 +56,27 @@ export default function Page() {
   const [idx, setIdx] = useState(0);
   const current = stations[idx];
 
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // ✅ prova a far partire il video (autoplay spesso ok perché muted)
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+
+    // assicura che sia muted prima del play (policy autoplay)
+    v.muted = true;
+
+    const tryPlay = async () => {
+      try {
+        await v.play();
+      } catch {
+        // se fallisce, resta il poster (ma almeno sappiamo che è policy/user-gesture)
+      }
+    };
+
+    tryPlay();
+  }, []);
+
   function showTuning(text?: string) {
     setTuning(true);
     const el = document.getElementById("tuningLine");
@@ -70,26 +91,30 @@ export default function Page() {
 
   return (
     <main className="hero">
-      {/* ✅ VIDEO LOOP BACKGROUND (metti /public/loops/pov.mp4) */}
+      {/* BG LAYER */}
       <div className="bgLayer" aria-hidden="true">
         <video
-  className="bgVideo"
-  controls
-  muted
-  loop
-  playsInline
-  preload="auto"
-  poster="/pov.png"
-  style={{ zIndex: 2 }}
->
-  <source src="/loops/pov.mp4" type="video/mp4" />
-</video>
+          ref={videoRef}
+          className="bgVideo"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/pov.png"
+          controls
+        >
+          <source src="/loops/pov.mp4" type="video/mp4" />
+        </video>
 
-        {/* fallback immagine (resta dietro al video) */}
+        {/* fallback immagine (sotto al video) */}
         <div className="bgFallback" aria-hidden="true" />
       </div>
 
-      {/* TOP BAR MINIMA */}
+      {/* VIGNETTE overlay: DEVE essere pointer-events none */}
+      <div className="vignette" aria-hidden="true" />
+
+      {/* TOP BAR */}
       <header className="top">
         <div className="brand">
           <b>CityVibe</b>
@@ -98,7 +123,7 @@ export default function Page() {
         <div className="pill">Guest · {current.cityLabel}</div>
       </header>
 
-      {/* SOLO PLAYER */}
+      {/* PLAYER */}
       <section className="wrap">
         <aside className="radio" aria-label="Player">
           <div className="radioHead">
@@ -122,7 +147,6 @@ export default function Page() {
             </div>
           </div>
 
-          {/* MINI RADIO ELEMENTS */}
           <div className="radioFace">
             <div className="freq">
               <span className="freqLabel">TUNE</span>
@@ -142,7 +166,6 @@ export default function Page() {
             </div>
           </div>
 
-          {/* EMBED SEMPRE VISIBILE */}
           <div className="playerWrap">
             <iframe
               title="Spotify Embed"
@@ -152,7 +175,6 @@ export default function Page() {
             />
           </div>
 
-          {/* TUNING OVERLAY */}
           <div className={`tuning ${tuning ? "on" : ""}`}>
             <div className="noise" aria-hidden="true" />
             <div className="tuningText">
@@ -163,7 +185,7 @@ export default function Page() {
         </aside>
       </section>
 
-      {/* SCORE / TICKER BAR */}
+      {/* TICKER */}
       <div className="ticker" role="status" aria-label="News ticker">
         <div className="tickerTrack">
           <div className="tickerItem">
@@ -186,43 +208,47 @@ export default function Page() {
           background: #000;
         }
 
-        /* ===== VIDEO BG LAYER ===== */
+        /* BG LAYER */
         .bgLayer {
           position: absolute;
           inset: 0;
           z-index: 0;
           overflow: hidden;
         }
+
+        /* ✅ mettiamo il video sopra al resto del background */
         .bgVideo {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
+          z-index: 2;
           transform: scale(1.02);
           filter: saturate(1.05) contrast(1.05) brightness(0.92);
+          pointer-events: auto; /* ✅ IMPORTANTISSIMO per i controlli */
         }
+
         .bgFallback {
           position: absolute;
           inset: 0;
+          z-index: 1;
           background-image: url("/pov.png");
           background-size: cover;
           background-position: center;
           transform: scale(1.03);
           filter: saturate(1.05) contrast(1.05) brightness(0.92);
-          z-index: -1; /* dietro al video */
         }
 
-        /* overlay/vignette */
-        /*.hero::before {
-          content: "";
+        /* ✅ overlay separato, NON deve bloccare click */
+        .vignette {
           position: absolute;
           inset: 0;
+          z-index: 3;
+          pointer-events: none;
           background: radial-gradient(80% 70% at 50% 30%, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.8)),
             linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22));
-          pointer-events: none;
-          z-index: 1;
-        }*/
+        }
 
         /* TOP */
         .top {
@@ -234,7 +260,7 @@ export default function Page() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          z-index: 3;
+          z-index: 10;
         }
         .brand {
           display: flex;
@@ -262,7 +288,7 @@ export default function Page() {
         /* WRAP */
         .wrap {
           position: relative;
-          z-index: 3;
+          z-index: 10;
           width: 100%;
           margin: 0;
         }
@@ -271,8 +297,8 @@ export default function Page() {
         .radio {
           position: fixed;
           right: 16px;
-          bottom: 56px; /* sopra ticker (40px) + respiro */
-          z-index: 6;
+          bottom: 56px;
+          z-index: 20;
 
           width: 420px;
           max-width: calc(100vw - 32px);
@@ -357,7 +383,6 @@ export default function Page() {
           user-select: none;
         }
 
-        /* RADIO FACE */
         .radioFace {
           display: flex;
           align-items: center;
@@ -367,6 +392,7 @@ export default function Page() {
           border-bottom: 1px solid rgba(255, 255, 255, 0.08);
           background: linear-gradient(90deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
         }
+
         .freq {
           display: grid;
           grid-template-columns: auto auto;
@@ -426,7 +452,6 @@ export default function Page() {
           background: rgba(255, 255, 255, 0.06);
         }
 
-        /* EMBED */
         .playerWrap {
           position: relative;
           height: 0;
@@ -441,7 +466,6 @@ export default function Page() {
           border: 0;
         }
 
-        /* TUNING */
         .tuning {
           position: absolute;
           inset: 0;
@@ -452,12 +476,13 @@ export default function Page() {
           opacity: 0;
           pointer-events: none;
           transition: opacity 0.18s ease;
-          z-index: 6;
+          z-index: 30;
         }
         .tuning.on {
           opacity: 1;
           pointer-events: auto;
         }
+
         .noise {
           position: absolute;
           inset: -40px;
@@ -466,13 +491,10 @@ export default function Page() {
           animation: drift 1.2s linear infinite;
         }
         @keyframes drift {
-          0% {
-            transform: translate3d(0, 0, 0);
-          }
-          100% {
-            transform: translate3d(-40px, 25px, 0);
-          }
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-40px, 25px, 0); }
         }
+
         .tuningText {
           position: relative;
           z-index: 2;
@@ -482,29 +504,19 @@ export default function Page() {
           background: rgba(0, 0, 0, 0.35);
           border-radius: 14px;
         }
-        .tuningText b {
-          display: block;
-          font-size: 14px;
-          margin-bottom: 4px;
-        }
-        .tuningText span {
-          display: block;
-          font-size: 12px;
-          color: rgba(238, 242, 255, 0.7);
-        }
 
-        /* TICKER */
         .ticker {
           position: absolute;
           left: 0;
           right: 0;
           bottom: 0;
-          z-index: 7;
+          z-index: 25;
           height: 40px;
           background: #d11f1f;
           border-top: 1px solid rgba(255, 255, 255, 0.2);
           overflow: hidden;
         }
+
         .tickerTrack {
           display: flex;
           height: 100%;
@@ -521,40 +533,17 @@ export default function Page() {
           padding-left: 16px;
         }
         @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
 
-        /* MOBILE */
         @media (max-width: 880px) {
-          .wrap {
-            margin: 64px 0 48px 0;
-          }
-          .playerWrap {
-            padding-bottom: 120%; /* embed grande su mobile */
-          }
-          .freq {
-            min-width: 132px;
-          }
-          .knob {
-            width: 50px;
-            height: 38px;
-          }
-          .nextBtn {
-            padding: 8px 9px;
-          }
-          .badge span {
-            display: none; /* su mobile: solo logo/placeholder */
-          }
+          .playerWrap { padding-bottom: 120%; }
           .radio {
             left: 12px;
             right: 12px;
             bottom: 56px;
-            width: auto; /* full width mobile */
+            width: auto;
             max-width: none;
             border-radius: 16px;
           }
