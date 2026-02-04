@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Station = {
   cityLabel: string;
@@ -58,19 +58,25 @@ export default function Page() {
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // ✅ prova a far partire il video (autoplay spesso ok perché muted)
+  // Stato video: vogliamo capire se sta davvero PLAYING oppure se fallisce
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [videoError, setVideoError] = useState<string | null>(null);
+
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
 
-    // assicura che sia muted prima del play (policy autoplay)
+    // autoplay policy: muted prima del play
     v.muted = true;
 
     const tryPlay = async () => {
       try {
         await v.play();
-      } catch {
-        // se fallisce, resta il poster (ma almeno sappiamo che è policy/user-gesture)
+      } catch (e: any) {
+        // non sempre è un errore grave; può essere policy di autoplay
+        setVideoError(
+          (e && (e.message || e.name)) ? String(e.message || e.name) : "Autoplay blocked or playback failed"
+        );
       }
     };
 
@@ -91,28 +97,61 @@ export default function Page() {
 
   return (
     <main className="hero">
-      {/* BG LAYER */}
+      {/* BACKGROUND VIDEO (unico, niente fallback div che può coprire) */}
       <div className="bgLayer" aria-hidden="true">
         <video
           ref={videoRef}
-          className="bgVideo"
+          className={`bgVideo ${isPlaying ? "ready" : ""}`}
           autoPlay
           muted
           loop
           playsInline
           preload="auto"
           poster="/pov.png"
-          controls
+          // se vuoi test manuale: metti controls={true}
+          controls={false}
+          // EVENTI IMPORTANTI
+          onPlaying={() => {
+            setIsPlaying(true);
+            setVideoError(null);
+          }}
+          onPause={() => {
+            // se va in pausa da solo, lo segnaliamo
+            setIsPlaying(false);
+          }}
+          onError={() => {
+            const v = videoRef.current;
+            const err = v?.error;
+            // MediaError codes: 1 aborted, 2 network, 3 decode, 4 src not supported
+            const msg = err
+              ? `MediaError code ${err.code}${err.message ? `: ${err.message}` : ""}`
+              : "Unknown video error";
+            setVideoError(msg);
+            setIsPlaying(false);
+          }}
         >
           <source src="/loops/pov.mp4" type="video/mp4" />
         </video>
-
-        {/* fallback immagine (sotto al video) */}
-        <div className="bgFallback" aria-hidden="true" />
       </div>
 
-      {/* VIGNETTE overlay: DEVE essere pointer-events none */}
+      {/* vignette overlay NON blocca */}
       <div className="vignette" aria-hidden="true" />
+
+      {/* DEBUG OVERLAY: appare solo se il video non sta playing o se c’è errore */}
+      {!isPlaying ? (
+        <div className="videoDebug" aria-hidden="true">
+          <div className="videoDebugBox">
+            <b>BG video</b>
+            <div>Status: {videoError ? "ERROR" : "NOT PLAYING"}</div>
+            <div className="small">
+              {videoError ? videoError : "Se qui resta così, il browser non sta riproducendo l’mp4."}
+            </div>
+            <div className="small">
+              Test diretto: apri <code>/loops/pov.mp4</code> nel browser.
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {/* TOP BAR */}
       <header className="top">
@@ -208,7 +247,6 @@ export default function Page() {
           background: #000;
         }
 
-        /* BG LAYER */
         .bgLayer {
           position: absolute;
           inset: 0;
@@ -216,38 +254,69 @@ export default function Page() {
           overflow: hidden;
         }
 
-        /* ✅ mettiamo il video sopra al resto del background */
         .bgVideo {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
-          z-index: 2;
           transform: scale(1.02);
           filter: saturate(1.05) contrast(1.05) brightness(0.92);
-          pointer-events: auto; /* ✅ IMPORTANTISSIMO per i controlli */
+          /* finché non è playing, lasciamo vedere poster senza “flash” */
+          opacity: 1;
         }
 
-        .bgFallback {
+        /* se vuoi: quando playing, puoi aumentare opacità o fare fade,
+           ma qui resta 1 (a te il tweak dopo). */
+        .bgVideo.ready {
+          opacity: 1;
+        }
+
+        .vignette {
           position: absolute;
           inset: 0;
-          z-index: 1;
-          background-image: url("/pov.png");
-          background-size: cover;
-          background-position: center;
-          transform: scale(1.03);
-          filter: saturate(1.05) contrast(1.05) brightness(0.92);
+          z-index: 2;
+          pointer-events: none;
+          background: radial-gradient(80% 70% at 50% 30%, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.8)),
+            linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22));
         }
 
-        /* ✅ overlay separato, NON deve bloccare click */
-        .vignette {
+        /* debug overlay */
+        .videoDebug {
           position: absolute;
           inset: 0;
           z-index: 3;
           pointer-events: none;
-          background: radial-gradient(80% 70% at 50% 30%, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.8)),
-            linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22));
+          display: flex;
+          align-items: flex-end;
+          justify-content: flex-start;
+          padding: 16px;
+        }
+        .videoDebugBox {
+          pointer-events: none;
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          background: rgba(0, 0, 0, 0.45);
+          backdrop-filter: blur(10px);
+          border-radius: 14px;
+          padding: 10px 12px;
+          color: rgba(238, 242, 255, 0.9);
+          font-size: 12px;
+          max-width: 420px;
+        }
+        .videoDebugBox b {
+          display: block;
+          margin-bottom: 6px;
+          font-size: 13px;
+        }
+        .small {
+          margin-top: 6px;
+          color: rgba(238, 242, 255, 0.7);
+          line-height: 1.35;
+        }
+        code {
+          background: rgba(255, 255, 255, 0.08);
+          padding: 2px 6px;
+          border-radius: 8px;
         }
 
         /* TOP */
@@ -285,7 +354,6 @@ export default function Page() {
           font-size: 12px;
         }
 
-        /* WRAP */
         .wrap {
           position: relative;
           z-index: 10;
@@ -293,7 +361,6 @@ export default function Page() {
           margin: 0;
         }
 
-        /* RADIO CARD */
         .radio {
           position: fixed;
           right: 16px;
@@ -319,6 +386,7 @@ export default function Page() {
           padding: 12px 14px;
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .radioTitle {
           display: flex;
           flex-direction: column;
@@ -345,6 +413,7 @@ export default function Page() {
           gap: 10px;
           flex-shrink: 0;
         }
+
         .badge {
           display: inline-flex;
           align-items: center;
@@ -482,7 +551,6 @@ export default function Page() {
           opacity: 1;
           pointer-events: auto;
         }
-
         .noise {
           position: absolute;
           inset: -40px;
@@ -516,7 +584,6 @@ export default function Page() {
           border-top: 1px solid rgba(255, 255, 255, 0.2);
           overflow: hidden;
         }
-
         .tickerTrack {
           display: flex;
           height: 100%;
