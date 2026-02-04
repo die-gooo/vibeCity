@@ -27,23 +27,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ) : null}
       </head>
 
-      <body>
-        {gtmId ? (
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
-              height="0"
-              width="0"
-              style={{ display: "none", visibility: "hidden" }}
-            />
-          </noscript>
-        ) : null}
+<body>
+  <div className="relative min-h-screen overflow-hidden">
+    <RadioBackground src="/bg.jpg" />
 
-        <div className="relative min-h-screen overflow-hidden">
-          <RadioBackground src="/pov.jpg" />
-          {children}
-        </div>
-      </body>
+    <div className="relative z-10">
+      {children}
+    </div>
+  </div>
+</body>
+
     </html>
   );
 }
