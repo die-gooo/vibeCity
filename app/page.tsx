@@ -214,7 +214,7 @@ export default function Page() {
         }
 
         /* overlay/vignette */
-        .hero::before {
+        /*.hero::before {
           content: "";
           position: absolute;
           inset: 0;
@@ -222,7 +222,7 @@ export default function Page() {
             linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22));
           pointer-events: none;
           z-index: 1;
-        }
+        }*/
 
         /* TOP */
         .top {
