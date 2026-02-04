@@ -1,10 +1,11 @@
 import "./../styles/globals.css";
 import Script from "next/script";
 import type { Metadata } from "next";
+import { RadioBackground } from "../components/RadioBackground";
 
 export const metadata: Metadata = {
   title: "CityVibe — Milano",
-  description: "Tune into your city via public Spotify playlists."
+  description: "Tune into your city via public Spotify playlists.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -26,16 +27,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ) : null}
       </head>
 
-      import { RadioBackground } from "@/components/RadioBackground";
+      <body>
+        {gtmId ? (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
+        ) : null}
 
-<body>
-  <div className="relative min-h-screen overflow-hidden">
-    <RadioBackground src="/bg.jpg" />
-
-    {children}
-  </div>
-</body>
-      
+        <div className="relative min-h-screen overflow-hidden">
+          <RadioBackground src="/bg.jpg" />
+          {children}
+        </div>
+      </body>
     </html>
   );
 }
