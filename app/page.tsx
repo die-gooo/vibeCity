@@ -130,7 +130,7 @@ export default function Page() {
             setIsPlaying(false);
           }}
         >
-          <source src="/loops/pov.mp4" type="video/mp4" />
+          <source src="/loops/pov.webm" type="video/webm" />
         </video>
       </div>
 
