@@ -254,23 +254,30 @@ export default function Page() {
           overflow: hidden;
         }
 
-        .bgVideo {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transform: scale(1.02);
-          filter: saturate(1.05) contrast(1.05) brightness(0.92);
-          /* finché non è playing, lasciamo vedere poster senza “flash” */
-          opacity: 1;
-        }
+.bgVideo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
 
-        /* se vuoi: quando playing, puoi aumentare opacità o fare fade,
-           ma qui resta 1 (a te il tweak dopo). */
-        .bgVideo.ready {
-          opacity: 1;
-        }
+  min-width: 100%;
+  min-height: 100%;
+
+  width: auto;
+  height: auto;
+
+  transform: translate(-50%, -50%) scale(1.04);
+  object-fit: cover;
+
+  z-index: 1;
+  opacity: 0;
+  transition: opacity .6s ease;
+
+  filter: saturate(1.05) contrast(1.05) brightness(0.92);
+}
+.bgVideo.ready {
+  opacity: 1;
+}
+
 
         .vignette {
           position: absolute;
