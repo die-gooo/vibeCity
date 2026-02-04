@@ -10,7 +10,6 @@
 
 *{ box-sizing:border-box; }
 html,body{ height:100%; }
-
 body{
   margin:0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
@@ -21,50 +20,3 @@ body{
 
 a{ color: inherit; text-decoration: none; }
 button{ font: inherit; }
-
-/* ====== PAGE LAYOUT ====== */
-.cv-hero{
-  position: relative;
-  min-height: 100vh;
-  overflow: hidden;
-}
-
-.cv-content{
-  position: relative;
-  z-index: 10;
-  padding: 40px;
-}
-
-/* ====== BACKGROUND (pov.png) ====== */
-.cv-bg{
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-
-  background-image: url("/pov.png");
-  background-size: cover;
-  background-position: center;
-
-  /* forza visibilità */
-  opacity: 1;
-
-  /* animazione VISIBILE (poi la rendiamo subtle) */
-  will-change: transform, filter;
-  animation: cvDrift 4s ease-in-out infinite;
-  filter: brightness(1) contrast(1.05) saturate(1.05);
-}
-
-@keyframes cvDrift{
-  0%{
-    transform: scale(1.00) translate3d(0,0,0);
-    filter: brightness(0.92) contrast(1.05) saturate(1.05);
-  }
-  50%{
-    transform: scale(1.10) translate3d(-2%, -2%, 0);
-    filter: brightness(1.05) contrast(1.08) saturate(1.08);
-  }
-  100%{
-    transform: scale(1.00) translate3d(0,0,0);
-    filter: brightness(0.92) contrast(1.05) saturate(1.05);
-  }
-}
