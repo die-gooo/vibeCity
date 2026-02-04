@@ -70,7 +70,9 @@ export default function Page() {
 
   return (
     <main className="hero">
-      <div className="bg" aria-hidden="true" />
+      <div className="bg cv-bgMotion" aria-hidden="true" />
+<div className="cv-noisePage" aria-hidden="true" />
+
 
       {/* TOP BAR MINIMA */}
       <header className="top">
