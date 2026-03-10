@@ -134,7 +134,7 @@ export default function Page() {
       {/* TOP BAR */}
       <header className="top">
         <div className="brand">
-          <b>CityVibe</b>
+          <h1 className="brandH1">CityVibe</h1>
           <small>global people vibes</small>
         </div>
         <div className="pill">Guest · {current.cityLabel}</div>
@@ -198,6 +198,19 @@ export default function Page() {
             </div>
           </div>
         </aside>
+      </section>
+
+      {/* SEO content block — visibile ma discreto, indicizzabile */}
+      <section className="seoBlock" aria-label="Le stazioni di CityVibe">
+        <h2>Radio urbana Milano — stazioni in onda</h2>
+        <ul>
+          {config.stations.map((s) => (
+            <li key={s.id}>
+              <strong>{s.stationLabel}</strong> — {s.cityLabel} {s.freq} FM. Playlist Spotify curata per i vibe di {s.cityLabel}.
+            </li>
+          ))}
+        </ul>
+        <p>CityVibe è una radio urbana online che trasmette playlist Spotify tematiche per quartieri di Milano: Navigli, Duomo, Porta Romana. Musica ambient e urban per vivere la città.</p>
       </section>
 
       {/* TICKER */}
@@ -319,9 +332,12 @@ export default function Page() {
           align-items: baseline;
           gap: 10px;
         }
-        .brand b {
+        .brandH1 {
           font-size: 16px;
           letter-spacing: 0.2px;
+          font-weight: bold;
+          margin: 0;
+          padding: 0;
         }
         .brand small {
           color: rgba(238, 242, 255, 0.75);
@@ -585,6 +601,39 @@ export default function Page() {
         @keyframes marquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
+        }
+
+        .seoBlock {
+          position: absolute;
+          bottom: 48px;
+          left: 16px;
+          z-index: 5;
+          max-width: 320px;
+          color: rgba(238, 242, 255, 0.45);
+          font-size: 11px;
+          line-height: 1.5;
+          pointer-events: none;
+        }
+        .seoBlock h2 {
+          font-size: 11px;
+          font-weight: 600;
+          margin: 0 0 4px;
+          color: rgba(238, 242, 255, 0.5);
+          letter-spacing: 0.04em;
+        }
+        .seoBlock ul {
+          margin: 0 0 4px;
+          padding-left: 14px;
+        }
+        .seoBlock li {
+          margin-bottom: 2px;
+        }
+        .seoBlock p {
+          margin: 0;
+          color: rgba(238, 242, 255, 0.35);
+        }
+        @media (max-width: 880px) {
+          .seoBlock { display: none; }
         }
 
    @media (max-width: 880px) {
