@@ -39,7 +39,7 @@ export default function Page() {
         cityLabel: city,
         stationLabel: "Station A",
         embedUrl: toEmbedUrl(
-          "https://open.spotify.com/playlist/3WWGsRoU65tU0g9bLATQMw?si=PAJQJG7BRkyjMMMCO9fG3Q"
+          "https://open.spotify.com/playlist/4t7Kb2QEWCwt96CfsYHC7L?si=keopCET4TwuDrPWE_JPq8g"
         ),
       },
       {
