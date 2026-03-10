@@ -3,7 +3,7 @@ import Script from "next/script";
 import type { Metadata } from "next";
 import { RadioBackground } from "../components/RadioBackground";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cityvibe.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cityvibe.space";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
