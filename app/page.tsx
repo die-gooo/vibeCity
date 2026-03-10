@@ -6,6 +6,7 @@ type Station = {
   cityLabel: string;
   stationLabel: string;
   embedUrl: string;
+  freq: string;
 };
 
 function toEmbedUrl(playlistUrl: string) {
@@ -37,27 +38,32 @@ export default function Page() {
     return [
       {
         cityLabel: city,
-        stationLabel: "Station A",
+        stationLabel: "Navigli Nights",
+        freq: "97.3",
         embedUrl: toEmbedUrl(
           "https://open.spotify.com/playlist/4t7Kb2QEWCwt96CfsYHC7L?si=keopCET4TwuDrPWE_JPq8g"
         ),
       },
       {
         cityLabel: city,
-        stationLabel: "Station B",
+        stationLabel: "Duomo Drift",
+        freq: "101.5",
         embedUrl: toEmbedUrl(
           "https://open.spotify.com/playlist/1D3IkjrQv7TPcfwyplb4Hf?si=60335457bcc74407"
         ),
       },
       {
         cityLabel: city,
-        stationLabel: "Station C",
+        stationLabel: "Porta Romana",
+        freq: "88.7",
         embedUrl: toEmbedUrl(
           "https://open.spotify.com/playlist/3WWGsRoU65tU0g9bLATQMw?si=ce24645063de4e6b"
         ),
       },
     ];
   }, []);
+
+  const isDev = process.env.NODE_ENV === "development";
 
   const [tuning, setTuning] = useState(false);
   const [idx, setIdx] = useState(0);
@@ -138,14 +144,15 @@ export default function Page() {
           }}
         >
           <source src="/loops/pov.webm" type="video/webm" />
+          <source src="/loops/pov.mp4" type="video/mp4" />
         </video>
       </div>
 
       {/* vignette overlay NON blocca */}
       <div className="vignette" aria-hidden="true" />
 
-      {/* DEBUG OVERLAY: appare solo se il video non sta playing o se c’è errore */}
-      {!isPlaying ? (
+      {/* DEBUG OVERLAY: solo in development */}
+      {isDev && !isPlaying ? (
         <div className="videoDebug" aria-hidden="true">
           <div className="videoDebugBox">
             <b>BG video</b>
@@ -196,7 +203,7 @@ export default function Page() {
           <div className="radioFace">
             <div className="freq">
               <span className="freqLabel">TUNE</span>
-              <span className="freqValue">97.3</span>
+              <span className="freqValue">{current.freq}</span>
               <span className="freqCity">{current.cityLabel.toUpperCase()}</span>
             </div>
 
@@ -235,10 +242,10 @@ export default function Page() {
       <div className="ticker" role="status" aria-label="News ticker">
         <div className="tickerTrack">
           <div className="tickerItem">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit — sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            NAVIGLI NIGHTS — late tram echoes &amp; neon reflections &nbsp;·&nbsp; DUOMO DRIFT — midnight walks, zero plans &nbsp;·&nbsp; PORTA ROMANA — aperitivo season never ends &nbsp;·&nbsp; ISOLA VIBES — rooftop sessions &amp; city lights &nbsp;·&nbsp; BRERA FREQUENCY — art walls &amp; slow mornings &nbsp;·&nbsp;
           </div>
           <div className="tickerItem">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit — sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            NAVIGLI NIGHTS — late tram echoes &amp; neon reflections &nbsp;·&nbsp; DUOMO DRIFT — midnight walks, zero plans &nbsp;·&nbsp; PORTA ROMANA — aperitivo season never ends &nbsp;·&nbsp; ISOLA VIBES — rooftop sessions &amp; city lights &nbsp;·&nbsp; BRERA FREQUENCY — art walls &amp; slow mornings &nbsp;·&nbsp;
           </div>
         </div>
       </div>
