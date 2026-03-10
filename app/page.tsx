@@ -1,25 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-
-type Station = {
-  cityLabel: string;
-  stationLabel: string;
-  embedUrl: string;
-  freq: string;
-};
-
-function toEmbedUrl(playlistUrl: string) {
-  try {
-    const u = new URL(playlistUrl);
-    const parts = u.pathname.split("/").filter(Boolean);
-    const id = parts[1];
-    if (!id) return playlistUrl;
-    return `https://open.spotify.com/embed/playlist/${id}?utm_source=generator`;
-  } catch {
-    return playlistUrl;
-  }
-}
+import { useEffect, useRef, useState } from "react";
+import { defaultConfig } from "@/lib/siteConfig";
+import type { SiteConfig } from "@/lib/siteConfig";
 
 function SpotifyMark() {
   return (
@@ -30,38 +13,16 @@ function SpotifyMark() {
 }
 
 export default function Page() {
-  const city = "Milano";
-  const displayName = "Diego";
-  const spotifyUserHandle = "nome_user"; // placeholder
+  const [config, setConfig] = useState<SiteConfig>(defaultConfig);
 
-  const stations: Station[] = useMemo(() => {
-    return [
-      {
-        cityLabel: city,
-        stationLabel: "Navigli Nights",
-        freq: "97.3",
-        embedUrl: toEmbedUrl(
-          "https://open.spotify.com/playlist/4t7Kb2QEWCwt96CfsYHC7L?si=keopCET4TwuDrPWE_JPq8g"
-        ),
-      },
-      {
-        cityLabel: city,
-        stationLabel: "Duomo Drift",
-        freq: "101.5",
-        embedUrl: toEmbedUrl(
-          "https://open.spotify.com/playlist/1D3IkjrQv7TPcfwyplb4Hf?si=60335457bcc74407"
-        ),
-      },
-      {
-        cityLabel: city,
-        stationLabel: "Porta Romana",
-        freq: "88.7",
-        embedUrl: toEmbedUrl(
-          "https://open.spotify.com/playlist/3WWGsRoU65tU0g9bLATQMw?si=ce24645063de4e6b"
-        ),
-      },
-    ];
+  useEffect(() => {
+    fetch("/api/admin/config")
+      .then((r) => r.json())
+      .then((data) => setConfig(data))
+      .catch(() => {}); // fallback to defaultConfig already set
   }, []);
+
+  const stations = config.stations;
 
   const isDev = process.env.NODE_ENV === "development";
 
@@ -113,6 +74,7 @@ export default function Page() {
       {/* BACKGROUND VIDEO (unico, niente fallback div che può coprire) */}
       <div className="bgLayer" aria-hidden="true">
         <video
+          key={config.videoUrl || "local"}
           ref={videoRef}
           className={`bgVideo ${isPlaying ? "ready" : ""}`}
           autoPlay
@@ -121,21 +83,17 @@ export default function Page() {
           playsInline
           preload="auto"
           poster="/pov.png"
-          // se vuoi test manuale: metti controls={true}
           controls={false}
-          // EVENTI IMPORTANTI
           onPlaying={() => {
             setIsPlaying(true);
             setVideoError(null);
           }}
           onPause={() => {
-            // se va in pausa da solo, lo segnaliamo
             setIsPlaying(false);
           }}
           onError={() => {
             const v = videoRef.current;
             const err = v?.error;
-            // MediaError codes: 1 aborted, 2 network, 3 decode, 4 src not supported
             const msg = err
               ? `MediaError code ${err.code}${err.message ? `: ${err.message}` : ""}`
               : "Unknown video error";
@@ -143,8 +101,14 @@ export default function Page() {
             setIsPlaying(false);
           }}
         >
-          <source src="/loops/pov.webm" type="video/webm" />
-          <source src="/loops/pov.mp4" type="video/mp4" />
+          {config.videoUrl ? (
+            <source src={config.videoUrl} />
+          ) : (
+            <>
+              <source src="/loops/pov.webm" type="video/webm" />
+              <source src="/loops/pov.mp4" type="video/mp4" />
+            </>
+          )}
         </video>
       </div>
 
