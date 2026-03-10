@@ -1,0 +1,44 @@
+# CityVibe
+
+> CityVibe is an urban radio web experience that tunes listeners into city vibes
+> through curated public Spotify playlists. No login required. Currently live for
+> Milano, Italy.
+
+## What it does
+
+CityVibe streams curated Spotify public playlists embedded in a retro-styled
+radio interface. Each "station" represents a neighbourhood mood or time-of-day
+vibe within a specific city. Users can switch between stations with a single tap.
+
+## Current city: Milano
+
+### Stations
+
+- **Navigli Nights** — 97.3 FM
+  Late-night sounds from the canal district. Slow grooves, neon reflections,
+  late tram echoes.
+
+- **Duomo Drift** — 101.5 FM
+  Midnight urban mood around the cathedral. Minimal beats, zero plans.
+
+- **Porta Romana** — 88.7 FM
+  Aperitivo-hour vibes from south Milano. Warm tempos, golden hour energy.
+
+## Technology
+
+- Framework: Next.js 15 (React 19), TypeScript
+- Music: Spotify embed (public playlists, no auth required)
+- Background: ambient video loop of the city
+
+## Target audience
+
+People who want to feel the pulse of a city through music — residents,
+travellers, remote workers, and anyone tuning into Milano's urban culture.
+
+## Entity
+
+- Product name: CityVibe
+- City focus: Milano (Milan), Italy
+- Category: Music / Urban lifestyle / Web application
+- Language: Italian (it-IT), English content
+- URL: https://cityvibe.app
