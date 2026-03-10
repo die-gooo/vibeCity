@@ -8,24 +8,25 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cityvibe.space";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "CityVibe — Milano",
+    default: "CityVibe — Radio Urbana Milano | Playlist Spotify per quartiere",
     template: "%s | CityVibe",
   },
   description:
-    "Tune into Milano's street vibes. A curated urban radio experience powered by Spotify playlists — from Navigli Nights to Duomo Drift.",
+    "CityVibe è la radio urbana di Milano. Playlist Spotify curate per quartiere: Navigli Nights, Duomo Drift, Porta Romana. Ascolta i vibe della città, gratis.",
   keywords: [
     "CityVibe",
-    "Milano",
-    "city vibes",
-    "Spotify playlist",
-    "urban radio",
+    "city vibe",
+    "cityvibe",
+    "city vibes Milano",
+    "radio urbana Milano",
+    "playlist Spotify Milano",
+    "musica Milano quartieri",
     "Navigli Nights",
     "Duomo Drift",
     "Porta Romana",
-    "Italy music",
-    "street culture",
-    "ambient music Milano",
-    "musica Milano",
+    "musica ambient Milano",
+    "urban radio Italia",
+    "playlist Milano 2026",
   ],
   authors: [{ name: "CityVibe" }],
   creator: "CityVibe",
@@ -40,9 +41,9 @@ export const metadata: Metadata = {
     locale: "it_IT",
     url: siteUrl,
     siteName: "CityVibe",
-    title: "CityVibe — Milano",
+    title: "CityVibe — Radio Urbana Milano",
     description:
-      "Tune into Milano's street vibes. Curated Spotify playlists for the city's urban pulse — Navigli, Duomo, Porta Romana.",
+      "CityVibe: playlist Spotify curate per i quartieri di Milano. Navigli Nights, Duomo Drift, Porta Romana. La radio urbana della città.",
     images: [
       {
         url: "/pov.png",
@@ -54,9 +55,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "CityVibe — Milano",
+    title: "CityVibe — Radio Urbana Milano",
     description:
-      "Tune into Milano's street vibes via curated Spotify playlists.",
+      "CityVibe: playlist Spotify curate per quartiere a Milano. Gratis, niente algoritmo.",
     images: ["/pov.png"],
   },
   alternates: {
@@ -67,6 +68,35 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: "CityVibe",
+      alternateName: ["city vibe", "cityvibe.space"],
+      url: siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/pov.png`,
+      },
+      description: "CityVibe è una radio urbana online con playlist Spotify curate per quartieri di Milano.",
+      foundingLocation: {
+        "@type": "City",
+        name: "Milano",
+      },
+      sameAs: [siteUrl],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: "CityVibe",
+      publisher: { "@id": `${siteUrl}/#organization` },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${siteUrl}/?q={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    },
     {
       "@type": "WebApplication",
       "@id": `${siteUrl}/#webapp`,
