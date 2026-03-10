@@ -49,6 +49,13 @@ export default function Page() {
           "https://open.spotify.com/playlist/1D3IkjrQv7TPcfwyplb4Hf?si=60335457bcc74407"
         ),
       },
+      {
+        cityLabel: city,
+        stationLabel: "Station C",
+        embedUrl: toEmbedUrl(
+          "https://open.spotify.com/playlist/3WWGsRoU65tU0g9bLATQMw?si=ce24645063de4e6b"
+        ),
+      },
     ];
   }, []);
 
