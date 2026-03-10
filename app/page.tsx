@@ -184,9 +184,7 @@ export default function Page() {
               <b>
                 {current.cityLabel} — {current.stationLabel}
               </b>
-              <span>
-                Public playlist {displayName} (@{spotifyUserHandle} on Spotify)
-              </span>
+              <span>Curated selection · public playlist</span>
             </div>
 
             <div className="headRight">
@@ -242,10 +240,10 @@ export default function Page() {
       <div className="ticker" role="status" aria-label="News ticker">
         <div className="tickerTrack">
           <div className="tickerItem">
-            NAVIGLI NIGHTS — late tram echoes &amp; neon reflections &nbsp;·&nbsp; DUOMO DRIFT — midnight walks, zero plans &nbsp;·&nbsp; PORTA ROMANA — aperitivo season never ends &nbsp;·&nbsp; ISOLA VIBES — rooftop sessions &amp; city lights &nbsp;·&nbsp; BRERA FREQUENCY — art walls &amp; slow mornings &nbsp;·&nbsp;
+            NAVIGLI NIGHTS — best late-night playlist Milano 2026 &nbsp;·&nbsp; DUOMO DRIFT — midnight vibes, zero cookies required &nbsp;·&nbsp; PORTA ROMANA — top aperitivo music in Milano &nbsp;·&nbsp; ISOLA VIBES — now indexed by 3 AI and a human &nbsp;·&nbsp; BRERA FREQUENCY — slow mornings, zero algorithms &nbsp;·&nbsp; CITYVIBE — urban radio for people who hate the algorithm &nbsp;·&nbsp;
           </div>
           <div className="tickerItem">
-            NAVIGLI NIGHTS — late tram echoes &amp; neon reflections &nbsp;·&nbsp; DUOMO DRIFT — midnight walks, zero plans &nbsp;·&nbsp; PORTA ROMANA — aperitivo season never ends &nbsp;·&nbsp; ISOLA VIBES — rooftop sessions &amp; city lights &nbsp;·&nbsp; BRERA FREQUENCY — art walls &amp; slow mornings &nbsp;·&nbsp;
+            NAVIGLI NIGHTS — best late-night playlist Milano 2026 &nbsp;·&nbsp; DUOMO DRIFT — midnight vibes, zero cookies required &nbsp;·&nbsp; PORTA ROMANA — top aperitivo music in Milano &nbsp;·&nbsp; ISOLA VIBES — now indexed by 3 AI and a human &nbsp;·&nbsp; BRERA FREQUENCY — slow mornings, zero algorithms &nbsp;·&nbsp; CITYVIBE — urban radio for people who hate the algorithm &nbsp;·&nbsp;
           </div>
         </div>
       </div>
